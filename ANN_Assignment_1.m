@@ -37,15 +37,27 @@ for i=1:1:40
      end
 end
 
-%Train DataSet APN e CON
-x= DataAPN([1:37],[1 : 465])
-x1 = DataCON([1:37],[1 : 465])
-trainDataSet = [x;x1]
+% %Train DataSet APN e CON
+% x= DataAPN([1:37],[1 : 465])
+% x1 = DataCON([1:37],[1 : 465])
+% trainDataSet = [x;x1]
+% 
+% %Train DataSet APN e CON
+% xAno= AnoAPN([1:37],[1 : 465])
+% xAno1 = AnoCON([1:37],[1 : 465])
+% trainDataSetAno = [xAno;xAno1]
 
-%Train DataSet APN e CON
-xAno= AnoAPN([1:37],[1 : 465])
-xAno1 = AnoCON([1:37],[1 : 465])
-trainDataSetAno = [xAno;xAno1]
+%Learning DataSet APN e CON
+x1 = DataCON([1:20],[1 : 465]);
+x= DataAPN([1:18],[1 : 465]);
+learningDataSet = [x;x1];
+
+%Test DataSet APN e CON
+x= DataCON([21:40],[1 : 465]);
+x1 = DataAPN([19:37],[1 : 465]);
+testDataSet = [x;x1];
+
+
 
 clear j i name salida_man  salida_man_1m x x1 xAno xAno1 RR_notch_abs_pr_ada;
 
