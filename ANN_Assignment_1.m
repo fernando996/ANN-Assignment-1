@@ -58,8 +58,19 @@ x1 = DataAPN([19:37],[1 : 465]);
 testDataSet = [x;x1];
 
 
+%Learning ANO DataSet APN e CON
+x1 = AnoCON([1:20],[1 : 465]);
+x= AnoAPN([1:18],[1 : 465]);
+learningANODataSet = [x;x1];
 
-clear j i name salida_man  salida_man_1m x x1 xAno xAno1 RR_notch_abs_pr_ada;
+%Test ANO DataSet APN e CON
+x= AnoCON([21:40],[1 : 465]);
+x1 = AnoAPN([19:37],[1 : 465]);
+testANODataSet = [x;x1];
+
+
+
+clear j i name salida_man  salida_man_1m x x1 RR_notch_abs_pr_ada;
 
 
 
