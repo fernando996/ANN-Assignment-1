@@ -37,16 +37,6 @@ for i=1:1:40
      end
 end
 
-% %Train DataSet APN e CON
-% x= DataAPN([1:37],[1 : 465])
-% x1 = DataCON([1:37],[1 : 465])
-% trainDataSet = [x;x1]
-% 
-% %Train DataSet APN e CON
-% xAno= AnoAPN([1:37],[1 : 465])
-% xAno1 = AnoCON([1:37],[1 : 465])
-% trainDataSetAno = [xAno;xAno1]
-
 %Learning DataSet APN e CON
 x1 = DataCON([1:20],[1 : 465]);
 x= DataAPN([1:18],[1 : 465]);
@@ -68,11 +58,20 @@ x= AnoCON([21:40],[1 : 465]);
 x1 = AnoAPN([19:37],[1 : 465]);
 testANODataSet = [x;x1];
 
-
-
+%Clear Unnecessary variables
 clear j i name salida_man  salida_man_1m x x1 RR_notch_abs_pr_ada;
 
-
+%Feature Creation
+for line=1:size(learningDataSet,1)
+    for col=1:size(learningDataSet,2)
+        asd=cell2mat(learningDataSet{line,col});
+        M{line,col}=mean(asd); %average
+        S{line,col} = std(asd); %Standard deviation
+        V{line,col}=var(asd); %variance
+        cvNN{line,col}=S{line,col}./ M{line,col}; 
+        % add your features
+    end
+end
 
 
 
