@@ -79,13 +79,13 @@ clear j i name salida_man  salida_man_1m RR_notch_abs_pr_ada;
 %Feature Creation
 for line=1:size(LearnData,1)
     for col=1:size(LearnData,2)
-        asd=cell2mat(LearnData(line,col));
-        M(line,col)=mean(asd); %average
-        S(line,col) = std(asd); %Standard deviation
-        V(line,col)=var(asd); %variance
-        cvNN(line,col)=S(line,col)./ M(line,col); 
+        asd=cell2mat(LearnData{line,col});
+        M{line,col}=mean(asd); %average
+        S{line,col} = std(asd); %Standard deviation
+        V{line,col}=var(asd); %variance
+        cvNN{line,col}=S{line,col}./ M{line,col}; 
         % add your features
-        %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
+        cc{line,col} = real(ifft(log(abs(fft(asd))))); %cepstrum 
         
     end
 end
