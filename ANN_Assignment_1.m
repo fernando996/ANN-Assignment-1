@@ -82,8 +82,12 @@ end
 
 %Clear Unnecessary variables
 clear j i name salida_man  salida_man_1m RR_notch_abs_pr_ada;
- 
-%Feature Creation
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Feature creation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
     for col=1:size(LearnData,2)
         asd=cell2mat(LearnData(col));
         M(col)=mean(asd); %average
@@ -95,35 +99,85 @@ clear j i name salida_man  salida_man_1m RR_notch_abs_pr_ada;
         
         % add your features
         %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
+        
+        %%cc(col) =  cceps(rrr);
+        cc(col) =  mean(rceps(asd));
+        
         RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
     end
 
- 
-    
-    
-    
+        
 feature_train=[M' S' V' cvNN' RMSSD' minVal' maxVal']';
 
 ano_train = LearnANO;
+ 
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% create Test set with features same as the train
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Choose a Training Function
-% For a list of all training functions type: help nntrain
-% 'trainlm' is usually fastest.
-% 'trainbr' takes longer but may be better for challenging problems.
-% 'trainscg' uses less memory. Suitable in low memory situations.
+    for col=1:size(TestData,2)
+        asd=cell2mat(TestData(col));
+        M(col)=mean(asd); %average
+        S(col) = std(asd); %Standard deviation
+        V(col)=var(asd); %variance
+        cvNN(col)=S(col)./ M(col); 
+        minVal(col) = min(asd); %minimum value
+        maxVal(col)= max(asd); %max value
+        
+        % add your features
+        %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
+        
+        %%cc(col) =  cceps(rrr);
+        cc(col) =  mean(rceps(asd));
+        
+        RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
+    end
+
+feature_test=[M' S' V' cvNN' RMSSD' minVal' maxVal']';
+
+ano_test = TestANO;
+
+%Clear Unnecessary variables
+clear asd aux cc col cvNN M maxVal minVal RMSSD S V LearnANO TestANO TestData LearnData;
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% create ANN check the performance 1st fold
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 trainFcn = 'trainscg';  % Scaled conjugate gradient backpropagation.
 
 % Create a Pattern Recognition Network
-hiddenLayerSize = 5000;
+hiddenLayerSize = 500;
 net = patternnet(hiddenLayerSize, trainFcn);
 
 % Setup Division of Data for Training, Validation, Testing
 net.divideParam.trainRatio = 70/100;
 net.divideParam.valRatio = 30/100;
 net.divideParam.testRatio = 0/100;
+net.performFcn = 'crossentropy';
+net.trainParam.epochs = 50;
+net.trainParam.max_fail=501;
 
 % Train the Network
 [net,tr] = train(net,feature_train,ano_train);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% create ANN check the performance 2st fold
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Train the Network
+[net_test,tr_test] = train(net,feature_test,ano_test);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Make the average result from both folds
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 
 % % Test the Network
 % y = net(x);
