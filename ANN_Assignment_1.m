@@ -112,8 +112,7 @@ clear j i name salida_man  salida_man_1m RR_notch_abs_pr_ada;
     end
 
    
-          
-          plot(j, asd);
+    
 feature_train=[M' S' V' cvNN' RMSSD' minVal' maxVal']';
 
 ano_train = LearnANO;
@@ -147,6 +146,11 @@ feature_test=[M' S' V' cvNN' RMSSD' minVal' maxVal']';
 
 ano_test = TestANO;
 
+
+
+
+
+
 %Clear Unnecessary variables
 clear asd aux cc col cvNN M maxVal minVal RMSSD S V LearnANO TestANO TestData LearnData;
 
@@ -161,7 +165,11 @@ trainFcn = 'trainscg';  % Scaled conjugate gradient backpropagation.
 hiddenLayerSize = 500;
 net = patternnet(hiddenLayerSize, trainFcn);
 
+%[trainInd,valInd,testInd] = ...
+%divideind(3000,1:2000,2001:2500,2501:3000);
+
 % Setup Division of Data for Training, Validation, Testing
+net.divideFcn = ''; 
 net.divideParam.trainRatio = 70/100;
 net.divideParam.valRatio = 30/100;
 net.divideParam.testRatio = 0/100;
