@@ -1,7 +1,9 @@
 clc
 clear all
 
-%Control Patient LEARN
+%==========================================================================
+%                           Learn Data Creation                           =
+%==========================================================================
 aux = 1;
 for i=1:1:20
     if i< 10
@@ -15,9 +17,13 @@ for i=1:1:20
     load(strcat('HuGCDN2014 DATABASE\LABELS\', name))
     
      for j=3:1:size(RR_notch_abs_pr_ada, 2)-3
-         
-         LearnData(1,aux) = RR_notch_abs_pr_ada(j);
-         LearnANO(1,aux) = salida_man_1m(j);
+         if i<=6
+             LearnData30Percent(1,aux) = RR_notch_abs_pr_ada(j);
+             LearnANO30Percent(1,aux) = salida_man_1m(j);
+         else
+             LearnData70Percent(1,aux) = RR_notch_abs_pr_ada(j);
+             LearnANO70Percent(1,aux) = salida_man_1m(j);
+         end
          aux = aux + 1;
      end
      
@@ -31,15 +37,25 @@ for i=1:1:20
     %Load Annotation -> salida_man
     load(strcat('HuGCDN2014 DATABASE\LABELS\', name))
     
-    for j=3:1:size(RR_notch_abs_pr_ada, 2)-3
-         LearnData(1,aux) = RR_notch_abs_pr_ada(j);
-         LearnANO(1,aux) = salida_man_1m(j);
+     for j=3:1:size(RR_notch_abs_pr_ada, 2)-3
+         if i<=6
+             LearnData30Percent(1,aux) = RR_notch_abs_pr_ada(j);
+             LearnANO30Percent(1,aux) = salida_man_1m(j);
+         else
+             LearnData70Percent(1,aux) = RR_notch_abs_pr_ada(j);
+             LearnANO70Percent(1,aux) = salida_man_1m(j);
+         end
          aux = aux + 1;
-    end
+     end
+     if i==6
+        aux = 1;
+     end
 end
 
+%==========================================================================
+%                           Test Data Creation                            =
+%==========================================================================
 aux = 1;
-%Control Patient TEST
 for i=21:1:40
     
     name = strcat("CON0" , int2str(i) , ".mat");
@@ -64,81 +80,107 @@ for i=21:1:40
         for j=3:1:size(RR_notch_abs_pr_ada, 2)-3
              TestData(1,aux) = RR_notch_abs_pr_ada(j);
              TestANO(1,aux) = salida_man_1m(j);
-            aux = aux + 1;
+             aux = aux + 1;
         end
      end
 end
 
+%==========================================================================
+%                    Learn Data 30% Feature Creation                      =
+%==========================================================================
 
-%Clear Unnecessary variables
-clear j i name salida_man  salida_man_1m RR_notch_abs_pr_ada;
+for col=1:size(LearnData30Percent,2)
+    asd=cell2mat(LearnData30Percent(col));
+    M(col)=mean(asd); %average
+    S(col) = std(asd); %Standard deviation
+    V(col)=var(asd); %variance
+    cvNN(col)=S(col)./ M(col); 
+    minVal(col) = min(asd); %minimum value
+    maxVal(col)= max(asd); %max value
+
+    % add your features
+    %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
+
+    %%cc(col) =  cceps(rrr);
+    cc_med(col) =  mean(abs(rceps(asd)));  %cepstrum médio
+    cc_max(col) =  max(abs( rceps(asd)));  %cepstrum máximo intervalo
+    cc_min(col) =  min(rceps(asd));  %cepstrum mínimo
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Feature creation
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    for col=1:size(LearnData,2)
-        asd=cell2mat(LearnData(col));
-        M(col)=mean(asd); %average
-        S(col) = std(asd); %Standard deviation
-        V(col)=var(asd); %variance
-        cvNN(col)=S(col)./ M(col); 
-        minVal(col) = min(asd); %minimum value
-        maxVal(col)= max(asd); %max value
-        
-        % add your features
-        %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
-        
-        %%cc(col) =  cceps(rrr);
-        cc_med(col) =  mean(abs(rceps(asd)));  %cepstrum médio
-        cc_max(col) =  max(abs( rceps(asd)));  %cepstrum máximo intervalo
-        cc_min(col) =  min(rceps(asd));  %cepstrum mínimo
-        
 
-   
-        
-        RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
-    end
+    RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
+end
 
-   
-          
-          plot(j, asd);
-feature_train=[M' S' V' cvNN' RMSSD' minVal' maxVal']';
+feature_train_30_percent=[M' S' V' cvNN' RMSSD' minVal' maxVal']';
+ano_train_30_percent = LearnANO30Percent;
 
-ano_train = LearnANO;
+
+%==========================================================================
+%                    Learn Data 70% Feature Creation                      =
+%==========================================================================
+
+for col=1:size(LearnData70Percent,2)
+    asd=cell2mat(LearnData70Percent(col));
+    M(col)=mean(asd); %average
+    S(col) = std(asd); %Standard deviation
+    V(col)=var(asd); %variance
+    cvNN(col)=S(col)./ M(col); 
+    minVal(col) = min(asd); %minimum value
+    maxVal(col)= max(asd); %max value
+
+    % add your features
+    %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
+
+    %%cc(col) =  cceps(rrr);
+    cc_med(col) =  mean(abs(rceps(asd)));  %cepstrum médio
+    cc_max(col) =  max(abs( rceps(asd)));  %cepstrum máximo intervalo
+    cc_min(col) =  min(rceps(asd));  %cepstrum mínimo
+
+
+
+
+    RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
+end
+
+feature_train_70_percent=[M' S' V' cvNN' RMSSD' minVal' maxVal']';
+ano_train_70_percent = LearnANO30Percent;
  
   
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% create Test set with features same as the train
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%==========================================================================
+%                         Test Data Feature Creation                      =
+%==========================================================================
 
-    for col=1:size(TestData,2)
-        asd=cell2mat(TestData(col));
-        M(col)=mean(asd); %average
-        S(col) = std(asd); %Standard deviation
-        V(col)=var(asd); %variance
-        cvNN(col)=S(col)./ M(col); 
-        minVal(col) = min(asd); %minimum value
-        maxVal(col)= max(asd); %max value
-        
-        % add your features
-        %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
-        
-        %%cc(col) =  cceps(rrr);
-        cc(col) =  mean(rceps(asd));  %cepstrum médio
-        cc_max(col) =  max(rceps(asd));  %cepstrum máximo intervalo
-        cc_min(col) =  min(rceps(asd));  %cepstrum mínimo
-        
-        RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
-    end
+for col=1:size(TestData,2)
+    asd=cell2mat(TestData(col));
+    M(col)=mean(asd); %average
+    S(col) = std(asd); %Standard deviation
+    V(col)=var(asd); %variance
+    cvNN(col)=S(col)./ M(col); 
+    minVal(col) = min(asd); %minimum value
+    maxVal(col)= max(asd); %max value
+
+    % add your features
+    %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
+
+    %%cc(col) =  cceps(rrr);
+    cc(col) =  mean(rceps(asd));  %cepstrum médio
+    cc_max(col) =  max(rceps(asd));  %cepstrum máximo intervalo
+    cc_min(col) =  min(rceps(asd));  %cepstrum mínimo
+
+    RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
+end
 
 feature_test=[M' S' V' cvNN' RMSSD' minVal' maxVal']';
-
 ano_test = TestANO;
 
-%Clear Unnecessary variables
-clear asd aux cc col cvNN M maxVal minVal RMSSD S V LearnANO TestANO TestData LearnData;
+feature_train = [ feature_train_30_percent feature_train_70_percent];
+ano_train = [ LearnANO30Percent LearnANO70Percent];
+
+%==========================================================================
+%                    CLEAR ALL unnecessary variables                      =
+%==========================================================================
+clear TestANO LearnData70Percent LearnData30Percent LearnANO30Percent LearnANO70Percent asd aux cc col cvNN M maxVal minVal RMSSD S V TestData LearnData cc_max cc_med cc_min i j name RR_notch_abs_pr_ada salida_man salida_man_1m;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
