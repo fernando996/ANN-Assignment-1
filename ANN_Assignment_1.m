@@ -101,12 +101,19 @@ clear j i name salida_man  salida_man_1m RR_notch_abs_pr_ada;
         %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
         
         %%cc(col) =  cceps(rrr);
-        cc(col) =  mean(rceps(asd));
+        cc_med(col) =  mean(abs(rceps(asd)));  %cepstrum médio
+        cc_max(col) =  max(abs( rceps(asd)));  %cepstrum máximo intervalo
+        cc_min(col) =  min(rceps(asd));  %cepstrum mínimo
+        
+
+   
         
         RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
     end
 
-        
+   
+          
+          plot(j, asd);
 feature_train=[M' S' V' cvNN' RMSSD' minVal' maxVal']';
 
 ano_train = LearnANO;
@@ -129,7 +136,9 @@ ano_train = LearnANO;
         %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
         
         %%cc(col) =  cceps(rrr);
-        cc(col) =  mean(rceps(asd));
+        cc(col) =  mean(rceps(asd));  %cepstrum médio
+        cc_max(col) =  max(rceps(asd));  %cepstrum máximo intervalo
+        cc_min(col) =  min(rceps(asd));  %cepstrum mínimo
         
         RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
     end
@@ -168,8 +177,26 @@ net.trainParam.max_fail=501;
 %%% create ANN check the performance 2st fold
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+clear net
+
+trainFcn = 'trainscg';  % Scaled conjugate gradient backpropagation.
+
+% Create a Pattern Recognition Network
+hiddenLayerSize = 500;
+net = patternnet(hiddenLayerSize, trainFcn);
+
+% Setup Division of Data for Training, Validation, Testing
+net.divideParam.trainRatio = 70/100;
+net.divideParam.valRatio = 30/100;
+net.divideParam.testRatio = 0/100;
+net.performFcn = 'crossentropy';
+net.trainParam.epochs = 50;
+net.trainParam.max_fail=501;
+
+
 % Train the Network
 [net_test,tr_test] = train(net,feature_test,ano_test);
+[net3,tr3] = train(net,feature_train,ano_train);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
