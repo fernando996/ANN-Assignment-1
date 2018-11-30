@@ -41,8 +41,11 @@ end
 aux = 1;
 %Control Patient TEST
 for i=21:1:40
-    
-    name = strcat("CON0" , int2str(i) , ".mat");
+    if i< 10
+        name = strcat("CON00" ,int2str(i), ".mat");
+    else
+        name = strcat("CON0" , int2str(i) , ".mat");
+    end
     %Load Data
     load(strcat('HuGCDN2014 DATABASE\RR\', name))
     %Load Annotation -> salida_man
@@ -53,22 +56,43 @@ for i=21:1:40
          TestANO(1,aux) = salida_man_1m(j);
          aux = aux + 1;
      end
-    
-     if i< 38         
+     
+     
+     if i< 10
+        name = strcat("APN00" ,int2str(i), ".mat");
+     else
         name = strcat("APN0" , int2str(i) , ".mat");
-        %Load Data
-        load(strcat('HuGCDN2014 DATABASE\RR\', name))
-        %Load Annotation -> salida_man
-        load(strcat('HuGCDN2014 DATABASE\LABELS\', name))
-
-        for j=3:1:size(RR_notch_abs_pr_ada, 2)-3
-             TestData(1,aux) = RR_notch_abs_pr_ada(j);
-             TestANO(1,aux) = salida_man_1m(j);
-            aux = aux + 1;
-        end
-     end
+    end
+    %Load Data
+    load(strcat('HuGCDN2014 DATABASE\RR\', name))
+    %Load Annotation -> salida_man
+    load(strcat('HuGCDN2014 DATABASE\LABELS\', name))
+    
+    for j=3:1:size(RR_notch_abs_pr_ada, 2)-3
+         TestData(1,aux) = RR_notch_abs_pr_ada(j);
+         TestANO(1,aux) = salida_man_1m(j);
+        aux = aux + 1;
+    end
 end
 
+%Apneatic Patient TEST
+for i=19:1:37
+    if i< 10
+        name = strcat("APN00" ,int2str(i), ".mat");
+    else
+        name = strcat("APN0" , int2str(i) , ".mat");
+    end
+    %Load Data
+    load(strcat('HuGCDN2014 DATABASE\RR\', name))
+    %Load Annotation -> salida_man
+    load(strcat('HuGCDN2014 DATABASE\LABELS\', name))
+    
+    for j=3:1:size(RR_notch_abs_pr_ada, 2)-3
+         TestData(1,aux) = RR_notch_abs_pr_ada(j);
+         TestANO(1,aux) = salida_man_1m(j);
+        aux = aux + 1;
+    end
+end
 
 %Clear Unnecessary variables
 clear j i name salida_man  salida_man_1m RR_notch_abs_pr_ada;
