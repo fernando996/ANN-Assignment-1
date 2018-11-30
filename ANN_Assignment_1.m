@@ -102,9 +102,9 @@ for col=1:size(LearnData30Percent,2)
     %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
 
     %%cc(col) =  cceps(rrr);
-    cc_med(col) =  mean(abs(rceps(asd)));  %cepstrum médio
-    cc_max(col) =  max(abs( rceps(asd)));  %cepstrum máximo intervalo
-    cc_min(col) =  min(rceps(asd));  %cepstrum mínimo
+    cc_med(col) =  mean(abs(rceps(asd)));  %cepstrum mï¿½dio
+    cc_max(col) =  max(abs( rceps(asd)));  %cepstrum mï¿½ximo intervalo
+    cc_min(col) =  min(rceps(asd));  %cepstrum mï¿½nimo
 
 
 
@@ -133,9 +133,9 @@ for col=1:size(LearnData70Percent,2)
     %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
 
     %%cc(col) =  cceps(rrr);
-    cc_med(col) =  mean(abs(rceps(asd)));  %cepstrum médio
-    cc_max(col) =  max(abs( rceps(asd)));  %cepstrum máximo intervalo
-    cc_min(col) =  min(rceps(asd));  %cepstrum mínimo
+    cc_med(col) =  mean(abs(rceps(asd)));  %cepstrum mï¿½dio
+    cc_max(col) =  max(abs( rceps(asd)));  %cepstrum mï¿½ximo intervalo
+    cc_min(col) =  min(rceps(asd));  %cepstrum mï¿½nimo
 
 
 
@@ -164,9 +164,9 @@ for col=1:size(TestData,2)
     %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
 
     %%cc(col) =  cceps(rrr);
-    cc(col) =  mean(rceps(asd));  %cepstrum médio
-    cc_max(col) =  max(rceps(asd));  %cepstrum máximo intervalo
-    cc_min(col) =  min(rceps(asd));  %cepstrum mínimo
+    cc(col) =  mean(rceps(asd));  %cepstrum mï¿½dio
+    cc_max(col) =  max(rceps(asd));  %cepstrum mï¿½ximo intervalo
+    cc_min(col) =  min(rceps(asd));  %cepstrum mï¿½nimo
 
     RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
 end
@@ -193,7 +193,11 @@ trainFcn = 'trainscg';  % Scaled conjugate gradient backpropagation.
 hiddenLayerSize = 500;
 net = patternnet(hiddenLayerSize, trainFcn);
 
+%[trainInd,valInd,testInd] = ...
+%divideind(3000,1:2000,2001:2500,2501:3000);
+
 % Setup Division of Data for Training, Validation, Testing
+net.divideFcn = ''; 
 net.divideParam.trainRatio = 70/100;
 net.divideParam.valRatio = 30/100;
 net.divideParam.testRatio = 0/100;
