@@ -324,44 +324,28 @@ feature_test feature_train feature_train_30_percent feature_train_70_percent ...
  position_trs1_best_perf = [position1(1) position2(1) position3(1)];
  position_trs2_best_perf = [position1(2) position2(2) position3(2)];
  
+ clear position1 position2 position3 aux_trs1_best_perf aux_trs2_best_perf;
+ 
  
  %best result 
  if min_best_perf(1)== min_best_perf(2) 
-         aux_position_left = find(trs1_best_perf==min(trs1_best_perf))
-         aux_position_rigth = find(trs2_best_perf==min(trs2_best_perf))
+         aux_position_left = find(min_best_perf==min(min_best_perf))
+         aux_position_rigth = find(min_best_perf==min(min_best_perf))
          aux_trs1_best_vperf = trs1_best_perf{aux_position_left}.best_vperf;
          aux_trs2_best_vperf = trs2_best_perf{aux_position_rigth}.best_vperf;
-     if aux_trs1_best_vperf <= aux_trs2_best_vperf
+     if aux_trs1_best_vperf >= aux_trs2_best_vperf
         best_position = [aux_position_left 0];
      else
         best_position = [0 aux_position_rigth];
      end
- elseif min_best_perf(1) < min_best_perf(2)
-    best_position =  [find(trs1_best_perf==min(trs1_best_perf) ) 0]; 
+ elseif min_best_perf(1) > min_best_perf(2)
+    best_position =  [find(min_best_perf==min(min_best_perf) ) 0]; 
  else 
     best_position =  [0 find(trs2_best_perf==min(trs2_best_perf) )];   
  end
  
   
-%worst result
-if  max_best_perf(1)==  max_best_perf(2) 
-        aux_position_left = find( trs1_best_perf==max( trs1_best_perf))
-        aux_position_rigth = find( trs2_best_perf==max( trs2_best_perf))
-        aux_trs1_worst_vperf = trs1_best_perf{aux_position_left}.best_vperf;
-        aux_trs2_worst_vperf = trs2_best_perf{aux_position_rigth}.best_vperf;
-    if aux_trs1_worst_vperf >= aux_trs2_worst_vperf
-       worst_position = [aux_position_left 0];
-    else
-       worst_position = [0 aux_position_rigth];
-    end
-elseif  max_best_perf(1) >  max_best_perf(2)
-   worst_position =  [find( trs1_best_perf==max( trs1_best_perf) ) 0]; 
-else 
-   worst_position =  [0 find(trs2_best_perf==max(trs2_best_perf) )];   
-end
 
- clear position1 position2 position3 aux_trs1_best_perf aux_trs2_best_perf aux_position_left ...
-    aux_position_rigth aux_trs1_worst_vperf aux_trs2_worst_vperf ;
 % disp(min(mse_val));
 % Position=find(mse_val==min(mse_val));
 % disp(Position);
