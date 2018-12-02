@@ -216,52 +216,55 @@ validation_size = aux_validation_size(2) %30% dos pacientes
 [trainInd,valInd,testInd] = divideind(train_data_size, 1:train_size,  train_size+1:train_size+validation_size); 
 
 trainFcn = ["trainscg" "traingdx" "trainbfg"];
-neurons_number = [ 1 10 50 500];
+neurons_number = [ 1 10 50 100];
+epochs_number = [ 10 50 100];
 aux = 1 ;
 
-for w=1:1:length(trainFcn)
-    for z=1:1:length(feature_train)
-        for j=1:1:length(neurons_number)
-            for i=1:10
-                clear net tr trainTargets valTargets testTargets;
-                % Create a Pattern Recognition Network
-                net = patternnet(neurons_number(j), char(trainFcn(w)));
-                net.performFcn = 'crossentropy';
+for f=1:1:length(epochs_number)
+    for w=1:1:length(trainFcn)
+        for z=1:1:length(feature_train)
+            for j=1:1:length(neurons_number)
+                for i=1:10
+                    clear net tr trainTargets valTargets testTargets;
+                    % Create a Pattern Recognition Network
+                    net = patternnet(neurons_number(j), char(trainFcn(w)));
+                    net.performFcn = 'crossentropy';
 
-                net.divideFcn = 'divideind';
-                %net.trainParam.showWindow = false;   
-                net.divideParam.trainInd=trainInd;
-                net.divideParam.valInd=valInd;
-                %net.divideParam.testInd=testInd;
+                    net.divideFcn = 'divideind';
+                    %net.trainParam.showWindow = false;   
+                    net.divideParam.trainInd=trainInd;
+                    net.divideParam.valInd=valInd;
+                    %net.divideParam.testInd=testInd;
 
-                net.trainParam.epochs = 10;
-                net.trainParam.max_fail=501;
+                    net.trainParam.epochs = epochs_number(f);
+                    net.trainParam.max_fail=501;
 
-                % Train the Network
-                [net tr ] = train(net,feature_train{z},ano_train);
-                nets1{aux} = net;
-                trs1{aux} =  tr;
+                    % Train the Network
+                    [net tr ] = train(net,feature_train{z},ano_train);
+                    nets1{aux} = net;
+                    trs1{aux} =  tr;
 
-                trs1_best_perf(aux) = trs1{aux}.best_perf;
-                trs1_best_vperf(aux) = trs1{aux}.best_vperf;
+                    trs1_best_perf(aux) = trs1{aux}.best_perf;
+                    trs1_best_vperf(aux) = trs1{aux}.best_vperf;
 
-                % Test the Network
-                y = net(feature_test{z}); 
-                s = net(feature_train{z}); 
-                e1{aux} = gsubtract(ano_test,y);
-                performance1{aux} = perform(net,ano_test,y);
-                tind = vec2ind(ano_test);
-                yind = vec2ind(y);
-                percentErrors1{aux} = sum(tind ~= yind)/numel(tind);
+                    % Test the Network
+                    y = net(feature_test{z}); 
+                    s = net(feature_train{z}); 
+                    e1{aux} = gsubtract(ano_test,y);
+                    performance1{aux} = perform(net,ano_test,y);
+                    tind = vec2ind(ano_test);
+                    yind = vec2ind(y);
+                    percentErrors1{aux} = sum(tind ~= yind)/numel(tind);
 
-                % Recalculate Training, Validation and Test Performance
-                trainTargets = ano_train .* tr.trainMask{1};
-                valTargets = ano_train .* tr.valMask{1};
-                trainPerformance1(aux) = perform(net,trainTargets,s);
-                valPerformance1(i) = perform(net,valTargets,s);
-                aux = aux + 1 
+                    % Recalculate Training, Validation and Test Performance
+                    trainTargets = ano_train .* tr.trainMask{1};
+                    valTargets = ano_train .* tr.valMask{1};
+                    trainPerformance1(aux) = perform(net,trainTargets,s);
+                    valPerformance1(i) = perform(net,valTargets,s);
+                    aux = aux + 1 
+                end
+
             end
-
         end
     end
 end
@@ -270,47 +273,49 @@ end
 %              create ANN check the performance 2st fold                  =
 %==========================================================================
 aux = 1 ;
-for w=1:1:length(trainFcn)
-    for z=1:1:length(feature_train)
-        for j=1:1:length(neurons_number)
-            for i=1:10
-                clear net tr trainTargets valTargets testTargets;
-                % Create a Pattern Recognition Network
-                net = patternnet(neurons_number(j), char(trainFcn(w)));
-                net.performFcn = 'crossentropy';
+for f=1:1:length(epochs_number)
+    for w=1:1:length(trainFcn)
+        for z=1:1:length(feature_train)
+            for j=1:1:length(neurons_number)
+                for i=1:10
+                    clear net tr trainTargets valTargets testTargets;
+                    % Create a Pattern Recognition Network
+                    net = patternnet(neurons_number(j), char(trainFcn(w)));
+                    net.performFcn = 'crossentropy';
 
-                net.divideFcn = 'divideind';
-                %net.trainParam.showWindow = false;   
-                net.divideParam.trainInd=trainInd;
-                net.divideParam.valInd=valInd;
-                %net.divideParam.testInd=testInd;
+                    net.divideFcn = 'divideind';
+                    %net.trainParam.showWindow = false;   
+                    net.divideParam.trainInd=trainInd;
+                    net.divideParam.valInd=valInd;
+                    %net.divideParam.testInd=testInd;
 
-                net.trainParam.epochs = 10;
-                net.trainParam.max_fail=501;
+                    net.trainParam.epochs = epochs_number(f);
+                    net.trainParam.max_fail=501;
 
-                % Train the Network
-                [net tr ] = train(net,feature_test{z},ano_test);
-                nets2{aux} = net;
-                trs2{aux} =  tr;
+                    % Train the Network
+                    [net tr ] = train(net,feature_test{z},ano_test);
+                    nets2{aux} = net;
+                    trs2{aux} =  tr;
 
-                trs2_best_perf(aux) = trs2{aux}.best_perf;
-                trs2_best_vperf(aux) = trs2{aux}.best_vperf;
+                    trs2_best_perf(aux) = trs2{aux}.best_perf;
+                    trs2_best_vperf(aux) = trs2{aux}.best_vperf;
 
-                % Test the Network
-                y = net(feature_train{z}); 
-                s = net(feature_test{z}); 
-                e2{aux} = gsubtract(ano_train,y);
-                performance2{aux} = perform(net,ano_train,y);
-                tind = vec2ind(ano_train);
-                yind = vec2ind(y);
-                percentErrors2{aux} = sum(tind ~= yind)/numel(tind);
+                    % Test the Network
+                    y = net(feature_train{z}); 
+                    s = net(feature_test{z}); 
+                    e2{aux} = gsubtract(ano_train,y);
+                    performance2{aux} = perform(net,ano_train,y);
+                    tind = vec2ind(ano_train);
+                    yind = vec2ind(y);
+                    percentErrors2{aux} = sum(tind ~= yind)/numel(tind);
 
-                % Recalculate Training, Validation and Test Performance
-                trainTargets = ano_test .* tr.trainMask{1};
-                valTargets = ano_test .* tr.valMask{1};
-                trainPerformance2(aux) = perform(net,trainTargets,s);
-                valPerformance2(aux) = perform(net,valTargets,s);
-                aux = aux +1 ;
+                    % Recalculate Training, Validation and Test Performance
+                    trainTargets = ano_test .* tr.trainMask{1};
+                    valTargets = ano_test .* tr.valMask{1};
+                    trainPerformance2(aux) = perform(net,trainTargets,s);
+                    valPerformance2(aux) = perform(net,valTargets,s);
+                    aux = aux +1 ;
+                end
             end
         end
     end
