@@ -97,26 +97,26 @@ for col=1:size(LearnData30Percent,2)
     cvNN(col)=S(col)./ M(col); 
     minVal(col) = min(asd); %minimum value
     maxVal(col)= max(asd); %max value
-
-    % add your features
-    %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
-
-    %%cc(col) =  cceps(rrr);
+    madVal(col)= mad(asd); %Mean or median absolute deviation
     cc_med(col) =  mean(abs(rceps(asd)));  %cepstrum m�dio
     cc_max(col) =  max(abs( rceps(asd)));  %cepstrum m�ximo intervalo
     cc_min(col) =  min(rceps(asd));  %cepstrum m�nimo
-
-
-
-
+    cc_std(col) = std(abs(rceps(asd))); %Standard deviation
+    cc_var(col)=var(abs(rceps(asd))); %variance
+    cc_cvNN(col)=cc_std(col)./ cc_var(col); 
+    cc_mad(col)= mad(abs(rceps(asd)));
     RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
 end
 
-feature_train_30_percent{1}=[M' S']';
-feature_train_30_percent{2}=[M' S' V' cvNN']';
-feature_train_30_percent{3}=[M' S' V' cvNN' RMSSD' minVal']';
-feature_train_30_percent{4}=[M' S' V' cvNN' RMSSD' minVal' maxVal' cc_max']';
-feature_train_30_percent{5}=[M' S' V' cvNN' RMSSD' minVal' maxVal' cc_max' cc_min' RMSSD']';
+feature_train_30_percent{1}=[M' S' V' cvNN']';
+feature_train_30_percent{2}=[M' S' V' cvNN' RMSSD' minVal' madVal']';
+feature_train_30_percent{3}=[M' S' V' cvNN' RMSSD' minVal' madVal' maxVal' cc_med' cc_max']';
+feature_train_30_percent{4}=[M' S' V' cvNN' RMSSD' minVal' madVal' maxVal' cc_med' cc_max' cc_min' cc_mad']';
+feature_train_30_percent{5}=[M' S' V' cvNN' RMSSD' minVal' madVal' maxVal' cc_med' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
+feature_train_30_percent{6}=[RMSSD' minVal' madVal' maxVal' cc_med' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
+feature_train_30_percent{7}=[S' V' cvNN' RMSSD' madVal' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
+feature_train_30_percent{8}=[RMSSD' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
+
 
 ano_train_30_percent = LearnANO30Percent;
 
@@ -133,26 +133,25 @@ for col=1:size(LearnData70Percent,2)
     cvNN(col)=S(col)./ M(col); 
     minVal(col) = min(asd); %minimum value
     maxVal(col)= max(asd); %max value
-
-    % add your features
-    %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
-
-    %%cc(col) =  cceps(rrr);
+    madVal(col)= mad(asd);
     cc_med(col) =  mean(abs(rceps(asd)));  %cepstrum m�dio
     cc_max(col) =  max(abs( rceps(asd)));  %cepstrum m�ximo intervalo
     cc_min(col) =  min(rceps(asd));  %cepstrum m�nimo
-
-
-
-
+    cc_std(col) = std(abs(rceps(asd))); %Standard deviation
+    cc_var(col)=var(abs(rceps(asd))); %variance
+    cc_cvNN(col)=cc_std(col)./ cc_var(col); 
+    cc_mad(col)= mad(abs(rceps(asd)));
     RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
 end
 
-feature_train_70_percent{1}=[M' S']';
-feature_train_70_percent{2}=[M' S' V' cvNN']';
-feature_train_70_percent{3}=[M' S' V' cvNN' RMSSD' minVal']';
-feature_train_70_percent{4}=[M' S' V' cvNN' RMSSD' minVal' maxVal' cc_max']';
-feature_train_70_percent{5}=[M' S' V' cvNN' RMSSD' minVal' maxVal' cc_max' cc_min' RMSSD']';
+feature_train_70_percent{1}=[M' S' V' cvNN']';
+feature_train_70_percent{2}=[M' S' V' cvNN' RMSSD' minVal' madVal']';
+feature_train_70_percent{3}=[M' S' V' cvNN' RMSSD' minVal' madVal' maxVal' cc_med' cc_max']';
+feature_train_70_percent{4}=[M' S' V' cvNN' RMSSD' minVal' madVal' maxVal' cc_med' cc_max' cc_min' cc_mad']';
+feature_train_70_percent{5}=[M' S' V' cvNN' RMSSD' minVal' madVal' maxVal' cc_med' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
+feature_train_70_percent{6}=[RMSSD' minVal' madVal' maxVal' cc_med' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
+feature_train_70_percent{7}=[S' V' cvNN' RMSSD' madVal' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
+feature_train_70_percent{8}=[RMSSD' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
 
 ano_train_70_percent = LearnANO70Percent;
  
@@ -169,24 +168,25 @@ for col=1:size(TestData,2)
     cvNN(col)=S(col)./ M(col); 
     minVal(col) = min(asd); %minimum value
     maxVal(col)= max(asd); %max value
-
-    % add your features
-    %cc(line,col) = real(ifft(log(abs(fft(asd))))); %cepstrum 
-
-    %%cc(col) =  cceps(rrr);
-    cc(col) =  mean(rceps(asd));  %cepstrum m�dio
+    madVal(col)= mad(asd);
+    cc_med(col) =  mean(rceps(asd));  %cepstrum m�dio
     cc_max(col) =  max(rceps(asd));  %cepstrum m�ximo intervalo
     cc_min(col) =  min(rceps(asd));  %cepstrum m�nimo
-
+    cc_std(col) = std(abs(rceps(asd))); %Standard deviation
+    cc_var(col)=var(abs(rceps(asd))); %variance
+    cc_cvNN(col)=cc_std(col)./ cc_var(col); 
+    cc_mad(col)= mad(abs(rceps(asd)));
     RMSSD(col)=sqrt(sum(((mean(asd)-asd).^2))/length(asd-1)); %Root Mean Square of the Successive Differences
 end
 
-feature_test{1}=[M' S']';
-feature_test{2}=[M' S' V' cvNN']';
-feature_test{3}=[M' S' V' cvNN' RMSSD' minVal']';
-feature_test{4}=[M' S' V' cvNN' RMSSD' minVal' maxVal' cc_max']';
-feature_test{5}=[M' S' V' cvNN' RMSSD' minVal' maxVal' cc_max' cc_min' RMSSD']';
-
+feature_test{1}=[M' S' V' cvNN']';
+feature_test{2}=[M' S' V' cvNN' RMSSD' minVal' madVal']';
+feature_test{3}=[M' S' V' cvNN' RMSSD' minVal' madVal' maxVal' cc_med' cc_max']';
+feature_test{4}=[M' S' V' cvNN' RMSSD' minVal' madVal' maxVal' cc_med' cc_max' cc_min' cc_mad']';
+feature_test{5}=[M' S' V' cvNN' RMSSD' minVal' madVal' maxVal' cc_med' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
+feature_test{6}=[RMSSD' minVal' madVal' maxVal' cc_med' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
+feature_test{7}=[S' V' cvNN' RMSSD' madVal' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
+feature_test{8}=[RMSSD' cc_max' cc_min' cc_mad' cc_std' cc_var' cc_cvNN']';
 
 ano_test = TestANO;
 
@@ -201,7 +201,7 @@ ano_train = [ LearnANO30Percent LearnANO70Percent];
 %==========================================================================
 %                    CLEAR ALL unnecessary variables                      =
 %==========================================================================
-clear TestANO LearnData70Percent LearnData30Percent LearnANO30Percent LearnANO70Percent asd aux cc col cvNN M maxVal minVal RMSSD S V TestData LearnData cc_max cc_med cc_min i j name RR_notch_abs_pr_ada salida_man salida_man_1m;
+clear madVal cc_var cc_std cc_mad cc_cvNN TestANO LearnData70Percent LearnData30Percent LearnANO30Percent LearnANO70Percent asd aux cc col cvNN M maxVal minVal RMSSD S V TestData LearnData cc_max cc_med cc_min i j name RR_notch_abs_pr_ada salida_man salida_man_1m;
 
 %==========================================================================
 %              create ANN check the performance 1st fold                  =
@@ -216,7 +216,7 @@ validation_size = aux_validation_size(2) %30% dos pacientes
 [trainInd,valInd,testInd] = divideind(train_data_size, 1:train_size,  train_size+1:train_size+validation_size); 
 
 trainFcn = ["trainscg" "traingdx" "trainbfg"];
-neurons_number = [ 1 10 20 30 ];
+neurons_number = [ 1 10 50 500];
 aux = 1 ;
 
 for w=1:1:length(trainFcn)
